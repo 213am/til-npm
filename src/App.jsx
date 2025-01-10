@@ -1,14 +1,13 @@
-import Counter from "./components/Counter";
-import Todo from "./components/Todo";
-import UserInfo from "./components/UserInfo";
+import CartList from "./components/cart/CartList";
+import ProductList from "./components/product/ProductList";
 
 function App() {
   return (
-    <div>
-      <Counter />
-      <Todo />
-      <UserInfo />
-    </div>
+    <>
+      <ProductList />
+      <br />
+      <CartList />
+    </>
   );
 }
 export default App;
