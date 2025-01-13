@@ -1,8 +1,11 @@
+import JoinForm from "./components/JoinForm";
+
 function App() {
   return (
-    <div className="bg-brand text-brand-dark p-72">
-      Custom Colors and Spacing
-    </div>
+    <>
+      <JoinForm />
+    </>
   );
 }
+
 export default App;
