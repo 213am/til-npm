@@ -1,118 +1,261 @@
-# Ant Design
+# react cookie 설치
 
-[site](https://ant.design/components/overview/)
+`npm i react-cookie`
 
-장점
+- 웹 브라우저에 보관(저장 기간이 설정 가능한 데이터)
+  <br />
 
-: UI 코딩 및 css 작업 시간 단축 및 통일성 있는 UI 구성 가능
+# JWT(JSON Web Token)
 
-단점
-: UI CSS 수정이 어렵다
-: 각 컴포넌트 사용법 학습에 시간이 오래 걸린다
+- 웹에서 사용되는 JSON 형식의 토큰에 대한 표준 규격
+- 많은 회사가 JWT를 사용하고 있음
+- 하지만, 반드시 사용하는 것은 아님
+- Token : 아주 길고 복잡한 문자열을 말함
 
-<br/>
+ <br />
 
-## 설치
+## JWT 에는 필수적으로 2가지 종류가 있습니다
 
-`npm install antd --save`
+### 1. Access Token
 
-<br/>
+- API 요청 시(axios, fetch 등) 활용
+- API 요청 시 Access Token 을 내용으로 포함하여 요청
+- 모든 호출에 Access Token 이 필요한 것은 아님(비회원 사용자 기능)
 
-## 실습
+### 2. Refresh Token
 
-- `/src/components/JoinForm.jsx` 파일 생성
+- JWT 인증키를 발급 시 유효기간을 설정
+- 기본적으로 30분을 인증 기간으로 설정
+- 필요에 의해서 2시간, 10시간, 3일 등 다양하게 설정 가능
 
-```jsx
-import { Button, Form, Input } from "antd";
+<br />
 
-const JoinForm = () => {
-  // 1. 기본값 넣기(default)
-  const initialValues = {
-    userid: "hong",
-    userpass: "hello",
-    nickname: "길동",
-    email: "a@bc.com",
-  };
+## Proxy 설정하기
 
-  // 2. 라벨 붙이기 => label="아이디"
+- `vite.config.js` 내용 추가
 
-  // 3. placeholder 넣기 => placeholder="아이디를 입력하세요"
+```js
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-  // 4. 필수값 표현하기 => required={true}
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      "/api": {
+        target: "URL 주소",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+});
+```
 
-  // 5. 안내 메세지 표시하기
-  //   rules={[
-  //     { required: true, message: "아이디는 필수입력 항목입니다" },
-  //     { min: 4, message: "아이디는 4자 이상입니다" },
-  //     { max: 8, message: "아이디는 8자 이하입니다" },
-  //   ]}
+## JWT 용 Axios 설정하기
 
-  // 6. 각 필드의 입력 중인 값 알아내기
-  const onChangeField = (_field) => {
-    console.log(_field[0].value);
-  };
+- 모든 백엔드 연동에서 반드시 JWT 를 사용하는 것은 아님
 
-  // 7. 확인 버튼 시 최종 입력값
-  const onFinished = (values) => {
-    console.log(values);
-  };
+### 1. JWT 없이 사용하는 axios
 
-  return (
-    <div>
-      <Form
-        style={{ width: 600, margin: "0 auto" }}
-        initialValues={initialValues}
-        onFieldsChange={(field, allFields) => onChangeField(field)}
-        onFinish={(values) => onFinished(values)}
-      >
-        <Form.Item
-          name={"userid"}
-          label="아이디"
-          required={true}
-          rules={[
-            { required: true, message: "아이디는 필수입력 항목입니다" },
-            { min: 4, message: "아이디는 4자 이상입니다" },
-            { max: 8, message: "아이디는 8자 이하입니다" },
-          ]}
-        >
-          <Input placeholder="아이디를 입력하세요" />
-        </Form.Item>
-        <Form.Item
-          name={"userpass"}
-          label="비밀번호"
-          required={true}
-          rules={[
-            { required: true, message: "비밀번호는 필수입력 항목입니다" },
-            {
-              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-              message:
-                "비밀번호는 최소 8자 이상이며, 대소문자와 숫자를 포함해야 합니다.",
-            },
-          ]}
-        >
-          <Input.Password placeholder="비밀번호를 입력하세요" />
-        </Form.Item>
-        <Form.Item name={"nickname"} label="닉네임">
-          <Input placeholder="닉네임을 입력하세요" />
-        </Form.Item>
-        <Form.Item
-          name={"email"}
-          label="이메일"
-          required={true}
-          rules={[
-            { required: true, message: "비밀번호는 필수입력 항목입니다" },
-            { type: "email", message: "이메일 형식에 맞지 않습니다" },
-          ]}
-        >
-          <Input placeholder="이메일을 입력하세요" />
-        </Form.Item>
-        <Form.Item>
-          <Button htmlType="submit">확인</Button>
-        </Form.Item>
-      </Form>
-    </div>
-  );
+- 로그인 API
+  : 로그인 성공시 `JWT` 를 발급
+  : 발급된 access token 을 cookie 또는 localStorage 에 보관
+  : recoil, useState, context API 에 보관하면 안됨(새로고침 시 사라짐)
+  : `/src/apis` 폴더 생성
+  : - `fetch.js` 파일 생성
+
+### 2. JWT 가 필요한 axios
+
+- `/src/apis/jwt.js` 파일 생성
+- interceptors 설정
+- 통상 Request 하기전에 처리
+  : Request 한 이후 jwt 인증 통과 못한 에러 처리
+- 통상 Response 하기전에 처리
+  : Response 한 이후 jwt 인증 통과 못한 에러 처리
+
+```js
+import axios from "axios";
+
+const jwtAxios = axios.create();
+
+// axios 호출 시 사전 옵션을 설정
+// request 옵션 설정
+const beforeReq = (config) => {
+  console.log("1. 요청 전에 먼저 전달", config);
+  return config;
+};
+const failReq = (err) => {
+  console.log("요청 실패 : failReq", err);
+  return Promise.reject(err);
 };
 
-export default JoinForm;
+// response 옵션 설정
+const beforeRes = (res) => {
+  console.log("2. 요청 결과 전처리", res);
+  return res;
+};
+const failRes = (err) => {
+  console.log("응답 실패 : failRes", err);
+  return Promise.reject(err);
+};
+
+jwtAxios.interceptors.request.use(beforeReq, failReq);
+jwtAxios.interceptors.response.use(beforeRes, failRes);
+export default jwtAxios;
+```
+
+## JWT 쿠키에 보관하기
+
+- 쿠키를 위한 파일 생성
+
+- `/src/utils` 폴더 생성
+- `/src/utils/cookie.js` 파일 생성
+
+```js
+import { Cookies } from "react-cookie";
+
+const cookies = new Cookies();
+
+// 쿠키에 데이터 저장하기
+export const setCookie = (name, value, options) => {
+  return cookies.set(name, value, { ...options });
+};
+
+// 쿠키에서 데이터 가져오기
+export const getCookie = (name) => {
+  return cookies.get(name);
+};
+
+// 쿠키에서 데이터 삭제하기
+export const removeCookie = (name) => {
+  return cookies.remove(name, { path: "/" });
+};
+```
+
+## jwt 쿠키에 보관하는 과정
+
+- 일반 axios 로 로그인 시도
+
+```jsx
+import { useEffect } from "react";
+import axiosInstance from "./apis/fetch";
+import { removeCookie, setCookie } from "./utils/cookie";
+
+function App() {
+  const loginApi = async () => {
+    try {
+      // 여기는 일반 axios 로 로그인을 하고 jwt 를 발급
+      const res = await axiosInstance.get("/api/user/access-token");
+      // 성공시 jwt 키를 쿠키에 저장
+      setCookie("accessToken", res.data.resultData);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+      // 실패시 jwt 를 쿠키에서 삭제
+      removeCookie("accessToken");
+    }
+  };
+  useEffect(() => {
+    loginApi();
+  }, []);
+  return (
+    <>
+      <button>jwt 를 활용한 호출</button>
+    </>
+  );
+}
+
+export default App;
+```
+
+- jwt 인증키를 넣어야 하는 경우
+
+```js
+import axios from "axios";
+import { getCookie, setCookie } from "../utils/cookie";
+
+const jwtAxios = axios.create();
+// axios 호출 시 사전 옵션을 설정
+
+// 백엔드로 Request 요청 시 사전 옵션을 설정
+const beforeReq = (config) => {
+  // console.log("1. 요청 전에 먼저 전달", config);
+  // 1. 먼저 쿠키를 읽어온다
+  const accessToken = getCookie("accessToken");
+  // 2. 인증키가 없는 경우
+  if (!accessToken) {
+    // 에러 메세지를 출력
+    return Promise.reject({
+      response: { data: { error: "로그인 후 다시 시도해주세요" } },
+    });
+  }
+  // 3. 인증키가 있는 경우
+  config.headers.Authorization = `Bearer ${accessToken}`;
+  return config;
+};
+const failReq = (err) => {
+  console.log("요청 실패 : failReq", err);
+  return Promise.reject(err);
+};
+jwtAxios.interceptors.request.use(beforeReq, failReq);
+
+// response 옵션 설정
+const beforeRes = async (res) => {
+  // console.log("2. 요청 결과 전처리", res);
+  // 결과가 정상적으로 오면 혹시 모를 jwt 키 변경을 위해 처리가 필요
+  // accessToken 을 새롭게 호출하고 다시 저장해준다
+  const result = await axios.get("/api/user/access-token");
+  setCookie("accessToken", result.data.resultData);
+  return res.config;
+};
+const failRes = async (err) => {
+  // console.log("응답 실패 : failRes", err);
+  try {
+    const result = await axios.get("/api/user/access-token");
+    setCookie("accessToken", result.data.resultData);
+    return Promise.reject(err);
+  } catch (error) {
+    console.log(error);
+  }
+};
+jwtAxios.interceptors.response.use(beforeRes, failRes);
+
+export default jwtAxios;
+```
+
+## 사용자 정보 recoil 에 보관하기
+
+- 사용자 로그인 API 연동 후 정보 저장
+- `/src/atoms` 폴더 생성
+- `/src/atoms/userInfo.js` 파일 생성
+
+```js
+import { atom } from "recoil";
+
+export const userInfo = atom({
+  Key: "userInfo",
+  default: {
+    name: "",
+    phone: "",
+    birth: "",
+    nickName: "",
+  },
+});
+```
+
+- Recoil 은 App.jsx 또는 main.jsx 에서 설정
+
+```jsx
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+import { RecoilRoot } from "recoil";
+
+createRoot(document.getElementById("root")).render(
+  <RecoilRoot>
+    <App />
+  </RecoilRoot>,
+);
 ```
