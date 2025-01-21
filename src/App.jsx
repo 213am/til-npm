@@ -1,9 +1,9 @@
-import JoinForm from "./components/JoinForm";
+import PwForm from "./components/PwForm";
 
 function App() {
   return (
     <>
-      <JoinForm />
+      <PwForm />
     </>
   );
 }

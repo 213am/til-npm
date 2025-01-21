@@ -116,3 +116,9 @@ const JoinForm = () => {
 
 export default JoinForm;
 ```
+
+## 실습 예제 2
+
+- 비밀번호 확인 입력창 추가
+
+- `/src/components/PwForm.jsx` 파일 생성
