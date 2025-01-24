@@ -17,6 +17,7 @@ function App() {
       setLoginInfo(res.data.resultData);
       // cookie 에 저장
       setCookie("accessToken", res.data.resultData.accessToken);
+      setCookie("refreshToken", res.data.resultData.refreshToken);
     } catch (error) {
       console.error(error);
     }

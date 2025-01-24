@@ -21,16 +21,11 @@
   - 검증 통과 시 새로운 accessToken 을 발급해서 준다
 - 2개의 값을 클라이언트가 보관(Recoil, Context, Cookie 등)
 
-## 3. other 시나리오
+## 3. refreshToken 있는 경우 처리
 
-- 사용자가 로그인 후
-- response 로 accessToken 만 오네?
-- refreshToken 이 없네...
-  - 서버관리자가 15분마다 accessToken 을 만료 시키네?
+### 3.1. 만료되면 다시 refreshToken 으로 요청하고 다시 새로운 토큰으로 api 호출
 
-### 3.1. 토큰 만료시 로그아웃 시켜서 다시 로그인을 요구하는 방법
-
-### 3.2. 토큰 만료시 다시 accessToken 을 요청하고 다시 새로운 토큰을 발급하는 방법
+### 3.2. 다시 발급받은 accessToken 관리
 
 ## 4. 필요로 한 npm 패키지
 
