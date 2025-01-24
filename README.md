@@ -1,124 +1,173 @@
-# Ant Design
+# JWT 프로젝트 반영
 
-[site](https://ant.design/components/overview/)
+- 사용자 인증은 2가지가 있습니다
+- 세션 인증
+- JWT 인증
+- 하이브리드 세션 + JWT 인증 혼합
 
-장점
+## 1. JWT(JSON Web Token)
 
-: UI 코딩 및 css 작업 시간 단축 및 통일성 있는 UI 구성 가능
+- 복잡한 문자열을 서버에서 만들어서 준다
 
-단점
-: UI CSS 수정이 어렵다
-: 각 컴포넌트 사용법 학습에 시간이 오래 걸린다
+## 2. 정석 시나리오
 
-<br/>
+- 사용자가 로그인을 합니다
+- Response 로 2개의 값이 오는게 정석
+- accessToken : 서버에서 만들어서 준다
+  - api 호출시 accessToken 을 함께 보낸다
+- refreshToken : 서버에서 만들어서 준다
+  - api 호출시 401(CORS) : 토큰 만료
+  - 토큰 만료 시 클라이언트가 보낸 refreshToken 을 서버에서 검증
+  - 검증 통과 시 새로운 accessToken 을 발급해서 준다
+- 2개의 값을 클라이언트가 보관(Recoil, Context, Cookie 등)
 
-## 설치
+## 3. other 시나리오
 
-`npm install antd --save`
+- 사용자가 로그인 후
+- response 로 accessToken 만 오네?
+- refreshToken 이 없네...
+  - 서버관리자가 15분마다 accessToken 을 만료 시키네?
 
-<br/>
+### 3.1. 토큰 만료시 로그아웃 시켜서 다시 로그인을 요구하는 방법
 
-## 실습
+### 3.2. 토큰 만료시 다시 accessToken 을 요청하고 다시 새로운 토큰을 발급하는 방법
 
-- `/src/components/JoinForm.jsx` 파일 생성
+## 4. 필요로 한 npm 패키지
+
+- axios
+- react-cookie
+- recoil
+
+## 5. 로그인 후 jwt 토큰 저장
 
 ```jsx
-import { Button, Form, Input } from "antd";
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { loginInfoState } from "./atoms/userInfo";
+import { setCookie } from "./utils/cookie";
 
-const JoinForm = () => {
-  // 1. 기본값 넣기(default)
-  const initialValues = {
-    userid: "hong",
-    userpass: "hello",
-    nickname: "길동",
-    email: "a@bc.com",
-  };
+function App() {
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
-  // 2. 라벨 붙이기 => label="아이디"
-
-  // 3. placeholder 넣기 => placeholder="아이디를 입력하세요"
-
-  // 4. 필수값 표현하기 => required={true}
-
-  // 5. 안내 메세지 표시하기
-  //   rules={[
-  //     { required: true, message: "아이디는 필수입력 항목입니다" },
-  //     { min: 4, message: "아이디는 4자 이상입니다" },
-  //     { max: 8, message: "아이디는 8자 이하입니다" },
-  //   ]}
-
-  // 6. 각 필드의 입력 중인 값 알아내기
-  const onChangeField = (_field) => {
-    console.log(_field[0].value);
-  };
-
-  // 7. 확인 버튼 시 최종 입력값
-  const onFinished = (values) => {
-    console.log(values);
+  const login = async () => {
+    try {
+      const res = await axios.post("/api/user/sign-in", {
+        email: "dkssud123@tmails.net",
+        upw: "1q2w3e4R!",
+      });
+      console.log(res.data.resultData);
+      // recoil 에 저장
+      setLoginInfo(res.data.resultData);
+      // cookie 에 저장
+      setCookie("accessToken", res.data.resultData.accessToken);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div>
-      <Form
-        style={{ width: 600, margin: "0 auto" }}
-        initialValues={initialValues}
-        onFieldsChange={(field, allFields) => onChangeField(field)}
-        onFinish={(values) => onFinished(values)}
-      >
-        <Form.Item
-          name={"userid"}
-          label="아이디"
-          required={true}
-          rules={[
-            { required: true, message: "아이디는 필수입력 항목입니다" },
-            { min: 4, message: "아이디는 4자 이상입니다" },
-            { max: 8, message: "아이디는 8자 이하입니다" },
-          ]}
-        >
-          <Input placeholder="아이디를 입력하세요" />
-        </Form.Item>
-        <Form.Item
-          name={"userpass"}
-          label="비밀번호"
-          required={true}
-          rules={[
-            { required: true, message: "비밀번호는 필수입력 항목입니다" },
-            {
-              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-              message:
-                "비밀번호는 최소 8자 이상이며, 대소문자와 숫자를 포함해야 합니다.",
-            },
-          ]}
-        >
-          <Input.Password placeholder="비밀번호를 입력하세요" />
-        </Form.Item>
-        <Form.Item name={"nickname"} label="닉네임">
-          <Input placeholder="닉네임을 입력하세요" />
-        </Form.Item>
-        <Form.Item
-          name={"email"}
-          label="이메일"
-          required={true}
-          rules={[
-            { required: true, message: "비밀번호는 필수입력 항목입니다" },
-            { type: "email", message: "이메일 형식에 맞지 않습니다" },
-          ]}
-        >
-          <Input placeholder="이메일을 입력하세요" />
-        </Form.Item>
-        <Form.Item>
-          <Button htmlType="submit">확인</Button>
-        </Form.Item>
-      </Form>
+      <h1>JWT : accessToken 만 존재</h1>
+      <button onClick={() => login()}>로그인</button>
+      <p>인증키 : {loginInfo?.accessToken}</p>
     </div>
   );
-};
-
-export default JoinForm;
+}
+export default App;
 ```
 
-## 실습 예제 2
+## 6. jwt 토큰 사용
 
-- 비밀번호 확인 입력창 추가
+- accessToken 사용해 axios 호출하기
+- aixois 호출시 header 에 Authrization 에 Bearer 로 담는다.
+- 만약 401 즉, 만료가 오면
+- 대응법 1 : 로그인으로 다시 이동
+- 대응법 2 : 토큰 재발급 후 다시 axios 호출
 
-- `/src/components/PwForm.jsx` 파일 생성
+```jsx
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { loginInfoState } from "./atoms/userInfo";
+import { getCookie, removeCookie, setCookie } from "./utils/cookie";
+
+function App() {
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+
+  const login = async () => {
+    try {
+      const res = await axios.post("/api/user/sign-in", {
+        email: "dkssud123@tmails.net",
+        upw: "1q2w3e4R!",
+      });
+      console.log(res.data.resultData);
+      // recoil 에 저장
+      setLoginInfo(res.data.resultData);
+      // cookie 에 저장
+      setCookie("accessToken", res.data.resultData.accessToken);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>JWT : accessToken 만 존재</h1>
+      <button onClick={() => login()}>로그인</button>
+      <p>인증키 : {loginInfo?.accessToken}</p>
+      <Test />
+    </div>
+  );
+}
+export default App;
+
+function Test() {
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+
+  const callFn = async () => {
+    try {
+      //accessToken 헤더에 추가
+      const accessToken = loginInfo.accessToken;
+      // const accessToken = getCookie("accessToken");
+      const res = await axios.get("/api/user", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(res.data);
+      // 만약에 인증키 만료라면
+      if (res.status === 401) {
+        // 인증키가 만료되었다면 후처리가 필요
+        // 1. 로그아웃 후 로그인 페이지로 이동
+        // removeCookie("accessToken");
+        // setLoginInfo({});
+        // alert("다시 로그인해주세요");
+        // alert("로그인 창으로 이동");
+        //
+        // 2. 다시 accessToken 발급 받기
+        refreshToken();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const refreshToken = async () => {
+    try {
+      const res = await axios.post("/api/user/access-token");
+      console.log(res.data);
+      setCookie("accessToken", res.data.resultData);
+      setLoginInfo((prev) => ({ ...prev, accessToken: res.data.resultData }));
+      // 원래 하려던 API 다시 호출
+      callFn();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return (
+    <>
+      <h2>테스트</h2>
+      <button onClick={() => callFn()}>요청</button>
+    </>
+  );
+}
+```
