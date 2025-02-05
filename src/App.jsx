@@ -1,41 +1,18 @@
-import axios from "axios";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Join from "./Join";
+import After from "./pages/member/After";
 
 const App = () => {
-  const handleSubmit = async () => {
-    try {
-      const formData = new FormData();
-      // 보내야하는 데이터
-      const sendData = {
-        email: "1234park@naver.com",
-        upw: "1111",
-        name: "홍길동",
-        phone: "01012345678",
-      };
-      // 문자열을 파일로 만들어서 보내야 함
-      formData.append(
-        "p",
-        new Blob([JSON.stringify(sendData)], { type: "application/json" }),
-      );
-      if (file) {
-        formData.append("pic", file);
-      }
-
-      const res = await axios.post("/api/user/sign-up", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
   return (
-    <div>
-      <h1>File 및 json 데이터 post 테스트</h1>
-      <button onClick={() => handleSubmit()}>업로드</button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<h1>HOME</h1>} />
+        <Route path="/join" element={<Join />} />
+        <Route path="/login" element={<h1>로그인 페이지</h1>} />
+        <Route path="/user" element={<h1>유저 로그인 성공</h1>} />
+        <Route path="/member/kko" element={<After />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
-
 export default App;
