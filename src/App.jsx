@@ -3,6 +3,7 @@ import Join from "./Join";
 import After from "./pages/member/After";
 import GoogleAfter from "./pages/member/GoogleAfter";
 import AnimePage from "./pages/AnimePage";
+import Framer from "./pages/Framer";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/member/kko" element={<After />} />
         <Route path="/member/google" element={<GoogleAfter />} />
         <Route path="/anime" element={<AnimePage />} />
+        <Route path="/framer" element={<Framer />} />
       </Routes>
     </BrowserRouter>
   );
