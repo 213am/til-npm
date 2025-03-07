@@ -5,18 +5,16 @@ import CartSummary from "./CartSummary";
 
 function CartList() {
   const cart = useRecoilValue(cartAtom);
-
   return (
     <div>
-      <h1> 내 장바구니</h1>
-      <CartSummary />
+      <h1>장바구니</h1>
       <div>
-        {cart.map((item) => (
+        {cart.map(item => (
           <CartItem key={item.id} item={item} />
         ))}
       </div>
+      <CartSummary />
     </div>
   );
 }
-
 export default CartList;

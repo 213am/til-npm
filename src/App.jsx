@@ -2,8 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Join from "./Join";
 import After from "./pages/member/After";
 import GoogleAfter from "./pages/member/GoogleAfter";
-import AnimePage from "./pages/AnimePage";
-import Framer from "./pages/Framer";
 
 const App = () => {
   return (
@@ -11,12 +9,9 @@ const App = () => {
       <Routes>
         <Route path="/" element={<h1>HOME</h1>} />
         <Route path="/join" element={<Join />} />
-        <Route path="/login" element={<h1>로그인 페이지</h1>} />
-        <Route path="/user" element={<h1>유저 로그인 성공</h1>} />
         <Route path="/member/kko" element={<After />} />
         <Route path="/member/google" element={<GoogleAfter />} />
-        <Route path="/anime" element={<AnimePage />} />
-        <Route path="/framer" element={<Framer />} />
+        <Route path="/login" element={<h1>로그인</h1>} />
       </Routes>
     </BrowserRouter>
   );

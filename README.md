@@ -1,50 +1,94 @@
-# Framer Motion
+# Anime.js
 
-- [공식사이트](https://motion.dev/docs/react-quick-start)
-- [공식예제](https://examples.motion.dev/react)
-- [참고블로그](https://velog.io/@keumky1/Framer-Motion-입문하기)
-- [참고블로그](https://nykim.work/114)
+- https://animejs.com
+- https://velog.io/@bluestragglr/Anime.js-사용하기
+- https://www.npmjs.com/package/animejs
 
 ```bash
-npm install framer-motion
+npm i animejs
 ```
 
-## 실습하기
+## 코드 적용
 
-- `/src/pages/Framer.jsx` 파일 생성
+- /src/pages/AniPage.jsx 생성
 
 ```jsx
-import { motion } from "framer-motion";
-import { useState } from "react";
+import anime from "animejs";
 
-const Framer = () => {
-  const [visible, setVisible] = useState(false);
-  const [move, setMove] = useState(false);
-  const [rotate, setRotate] = useState(false);
+import { useEffect } from "react";
+import { useRef } from "react";
+
+const AniPage = () => {
+  const BoxWrap = {
+    position: "releative",
+    width: "100%",
+    height: "80vh",
+    backgroundColor: "yellowgreen",
+  };
+  const BoxStyle = {
+    position: "absolute",
+    left: 100,
+    top: 250,
+    width: 100,
+    height: 100,
+    backgroundColor: "red",
+  };
+
+  // 만약 html 이었으면 querySelector(".클래스명")
+  // React 이므로 useRef 로 html 태그를 참조한다.
+  const boxRef = useRef(null);
+  // 버튼 이벤트에서 anime 적용해보기
+  const motionA = () => {
+    anime({
+      targets: boxRef.current,
+      left: "240px",
+      backgroundColor: "#FFF",
+      borderRadius: ["0%", "50%"],
+      easing: "easeInOutQuad",
+    });
+  };
+  const motionB = () => {
+    anime({
+      targets: boxRef.current,
+      scale: 1.5,
+      duration: 2000,
+      backgroundColor: "#0F0",
+    });
+  };
+  const motionC = () => {
+    anime({
+      targets: boxRef.current,
+      scale: 1,
+      left: 0,
+      duration: 2000,
+      backgroundColor: "#F00",
+    });
+  };
+
+  // 실제 anime 적용해보기
+  useEffect(() => {
+    const box = boxRef.current;
+    // anime({
+    //   targets: box,
+    //   translateX: 150,
+    //   duration: 5000,
+    //   rotate: "1turn",
+    // });
+  }, []);
 
   return (
     <div>
-      <div className=" flex items-center px-10 py-10 gap-5">
-        <h1 className="text-3xl">Framer Motion</h1>
-        <button
-          onClick={() => setRotate(!rotate)}
-          className="px-4 py-1 bg-blue-400 rounded-sm text-white text-base font-semibold"
-        >
-          실행
-        </button>
+      <h1>AniPage</h1>
+      <div>
+        <button onClick={motionA}>효과 1</button>
+        <button onClick={motionB}>효과 2</button>
+        <button onClick={motionC}>효과 3</button>
       </div>
-      <motion.div
-        initial={{ rotate: 0 }}
-        animate={{ rotate: rotate ? 510 : 0 }}
-        transition={{ duration: 0.7 }}
-        drag
-        dragConstraints={{ left: 0, right: 500, top: -100, bottom: 500 }}
-        className="flex w-48 h-48 bg-yellow-200 mt-10 mx-20 justify-center items-center"
-      >
-        애니메이션용 DIV
-      </motion.div>
+      <div style={BoxWrap}>
+        <div style={BoxStyle} ref={boxRef}></div>
+      </div>
     </div>
   );
 };
-export default Framer;
+export default AniPage;
 ```

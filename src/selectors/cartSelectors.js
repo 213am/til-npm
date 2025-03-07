@@ -2,31 +2,28 @@ import { selector } from "recoil";
 import { cartAtom } from "../atoms/cartAtoms";
 import { productAtom } from "../atoms/productAtoms";
 
-// 장바구니에 담긴 제품 총액
+// 총금액 구하기
 export const cartTotalSelector = selector({
   key: "cartTotal",
   get: ({ get }) => {
     // 장바구니
     const cart = get(cartAtom);
-    // 제품 목록
-    const productList = get(productAtom);
-    // acc = accumulator 누적값
-    // cur = currentValue 현재값
-    // qty = quantity 수량
-    return cart.reduce((acc, cur) => {
-      const product = productList.find((item) => cur.id === item.id);
-      // 전체 합산금액 계산
-      // return 현재 금액 + (제품가격 * 장바구니에 담긴 갯수)
-      return acc + product.price * cur.qty;
+    // 제품들
+    const products = get(productAtom);
+    return cart.reduce((total, item) => {
+      const product = products.find(pro => item.id === pro.id);
+      // 전체 합산이 필요하다
+      // 현재까지 금액 + (제품가격 * 장바구니 담긴 개수)
+      return total + product.price * item.qty;
     }, 0);
   },
 });
 
-// 장바구니에 담긴 제품 수
+// 장바구니 제품총수 구하기
 export const cartItemCounterSelector = selector({
   key: "cartItemCount",
   get: ({ get }) => {
     const cart = get(cartAtom);
-    return cart.reduce((acc, cur) => acc + cur.qty, 0);
+    return cart.reduce((total, item) => total + item.qty, 0);
   },
 });

@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
 export const todoListAtom = atom({
-  key: "todoListAtom", // atom 구분하는 키
-  default: [], // todoList 를 담을 기본 배열
+  key: "todoListAtom", // atom 구분 문자열 즉, 키값
+  default: [], // 기본 할일 배열의 목록
 });

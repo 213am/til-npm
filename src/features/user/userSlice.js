@@ -21,28 +21,28 @@ const userSlice = createSlice({
   name: "userSlice",
   initialState,
   reducers: {
-    showInfo: (state) => {
+    showInfo: state => {
       console.log("사용자 정보 : ", state);
     },
   },
   // 비동기 즉, api 연동 작업후 slice 의 state 관리
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       .addCase(fetchUser.pending, (state, action) => {
-        // 연결중
+        // 연결중..
         // console.log("fetchUser.pending : ", action.payload);
         state.loading = true;
         state.error = null;
+        // state.data = [];
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
-        // 성공적 연결 및 데이터 출력
+        // 성공적 연결 및 데이터출력
         // console.log("fetchUser.fulfilled : ", action.payload);
         state.loading = false;
         state.error = null;
         state.data = action.payload;
       })
       .addCase(fetchUser.rejected, (state, action) => {
-        // 에러 시
         // console.log("fetchUser.rejected : ", action.payload);
         state.loading = false;
         state.error = action.payload;

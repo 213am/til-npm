@@ -1,36 +1,32 @@
 import { useRecoilState } from "recoil";
-import { todoListAtom } from "../atoms/todoListAtom";
+import { todoListAtom } from "../atoms/TodoListAtom";
 import { useState } from "react";
 import TodoListSelector from "./TodoListSelector";
 
-const TodoListAtom = () => {
-  const [todoList, setTodoList] = useRecoilState(todoListAtom);
+function TodoListAtom() {
+  const [todos, setTodos] = useRecoilState(todoListAtom);
   const [inputValue, setInputValue] = useState("");
-  // 할일 추가
+  //   할일 추가
   const addTodo = () => {
     if (inputValue.trim()) {
-      setTodoList([
-        ...todoList,
+      setTodos([
+        ...todos,
         { id: Date.now(), title: inputValue, completed: false },
       ]);
     }
     setInputValue("");
   };
-
-  const deleteTodo = (e) => {
-    const todos = todoList.filter((item) => item.id !== e);
-    console.log(todos);
-    setTodoList(todos);
+  // 할일 삭제
+  const deleteTodo = id => {
+    setTodos(todos.filter(item => item.id !== id));
   };
-
-  const toggleTodo = (e) => {
-    setTodoList(
-      todoList.map((item) =>
-        item.id === e ? { ...item, completed: !item.completed } : item,
+  const toggleTodo = id => {
+    setTodos(
+      todos.map(item =>
+        item.id === id ? { ...item, completed: !item.completed } : item,
       ),
     );
   };
-
   return (
     <div>
       <h1>TodoListAtom</h1>
@@ -38,37 +34,28 @@ const TodoListAtom = () => {
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={e => setInputValue(e.target.value)}
         />
-        <button style={{ marginLeft: "10px" }} onClick={() => addTodo()}>
-          추가
-        </button>
+        <button onClick={() => addTodo()}>추가</button>
         <ul>
           {/* 목록출력 */}
-          {todoList.map((item) => (
+          {todos.map(item => (
             <li key={item.id}>
-              <span
+              <p
+                onClick={() => toggleTodo(item.id)}
                 style={{
                   textDecoration: item.completed ? "line-through" : "none",
                 }}
-                onClick={() => toggleTodo(item.id)}
               >
                 {item.title}
-              </span>
-              <button
-                style={{ marginLeft: "10px" }}
-                onClick={() => deleteTodo(item.id)}
-              >
-                삭제
-              </button>
+              </p>
+              <button onClick={() => deleteTodo(item.id)}>삭제</button>
             </li>
           ))}
         </ul>
       </div>
-      <br />
       <TodoListSelector />
     </div>
   );
-};
-
+}
 export default TodoListAtom;

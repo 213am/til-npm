@@ -4,7 +4,6 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import prettier from "eslint-plugin-prettier";
-
 export default [
   { ignores: ["dist"] },
   {
@@ -13,6 +12,7 @@ export default [
       ecmaVersion: "latest",
       globals: globals.browser,
       parserOptions: {
+        ecmaVersion: "latest",
         ecmaFeatures: { jsx: true },
         sourceType: "module",
       },
@@ -22,7 +22,7 @@ export default [
       react,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
-      prettier,
+      prettier, // Prettier 플러그인
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -35,7 +35,7 @@ export default [
         { allowConstantExport: true },
       ],
       "prettier/prettier": "warn",
-      "react/prop-types": "off",
+      "@typescript-eslint/no-unused-vars": "off",
     },
   },
 ];

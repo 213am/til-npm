@@ -5,15 +5,13 @@ import {
 } from "../../selectors/cartSelectors";
 
 function CartSummary() {
-  const totalPrice = useRecoilValue(cartTotalSelector);
-  const totalCount = useRecoilValue(cartItemCounterSelector);
-
+  const total = useRecoilValue(cartTotalSelector);
+  const count = useRecoilValue(cartItemCounterSelector);
   return (
     <div>
-      <p>총 상품 수 : {totalCount}</p>
-      <p>총 금액 : {totalPrice}원</p>
+      <p>총 상품 수: {count}</p>
+      <p>총 금액 : {total}원</p>
     </div>
   );
 }
-
 export default CartSummary;
